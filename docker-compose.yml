@@ -1,0 +1,81 @@
+# Docker Compose configuration for VPN, qBittorrent and Jellyseerr
+# documentation: https://github.com/nebitessema/coolify-vpn-stack
+# slogan: Secure media downloading and requesting through VPN
+# tags: vpn,torrents,media,gluetun,qbittorrent,jellyseerr
+# port: 8080
+
+version: '3.8'
+volumes:
+  gluetun-config: null
+  qbittorrent-config: null
+networks:
+  coolify:
+    external: true
+services:
+  # --- Gluetun Service ---
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    networks:
+      - coolify
+    ports:
+      - "6881:6881"
+      - "6881:6881/udp"
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER:-mullvad}
+      - VPN_TYPE=${VPN_TYPE:-wireguard}
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - DNS_ADDRESS=${DNS_ADDRESS:-1.1.1.1}
+      - TZ=${TZ:-America/New_York}
+    volumes:
+      - gluetun-config:/gluetun
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gluetun-qbit.rule=Host(`${QBIT_DOMAIN:-qbit.jannah.help}`)
+      - traefik.http.routers.gluetun-qbit.entrypoints=https
+      - traefik.http.routers.gluetun-qbit.tls.certresolver=letsencrypt
+      - traefik.http.routers.gluetun-qbit.service=gluetun-qbit-svc
+      - traefik.http.services.gluetun-qbit-svc.loadbalancer.server.port=8080
+      - traefik.http.routers.gluetun-jellyseerr.rule=Host(`${JELLYSEERR_DOMAIN:-see.jannah.help}`)
+      - traefik.http.routers.gluetun-jellyseerr.entrypoints=https
+      - traefik.http.routers.gluetun-jellyseerr.tls.certresolver=letsencrypt
+      - traefik.http.routers.gluetun-jellyseerr.service=gluetun-jellyseerr-svc
+      - traefik.http.services.gluetun-jellyseerr-svc.loadbalancer.server.port=5055
+
+  # --- qBittorrent Service ---
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/New_York}
+      - WEBUI_PORT=8080
+    volumes:
+      - qbittorrent-config:/config
+      - ${DOWNLOADS_PATH:-/data/downloads}:/downloads
+    restart: unless-stopped
+
+  # --- Jellyseerr Service ---
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    network_mode: "service:gluetun"
+    depends_on:
+      - gluetun
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/New_York}
+    volumes:
+      - ${JELLYSEERR_CONFIG:-/data/jellyseerr-config}:/app/config
+    restart: unless-stopped
