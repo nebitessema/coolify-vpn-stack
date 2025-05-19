@@ -62,7 +62,7 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - qbittorrent-config:/config
-      - ${DOWNLOADS_PATH:-/data/downloads}:/downloads
+      - /data/downloads:/downloads
     restart: unless-stopped
 
   # --- Jellyseerr Service ---
@@ -77,5 +77,5 @@ services:
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/New_York}
     volumes:
-      - ${JELLYSEERR_CONFIG:-/data/jellyseerr-config}:/app/config
+      - /data/jellyseerr-config:/app/config
     restart: unless-stopped
