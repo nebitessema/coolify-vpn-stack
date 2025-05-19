@@ -38,13 +38,16 @@ services:
       - gluetun-config:/gluetun
     restart: unless-stopped
     labels:
+      - coolify.managed=true
       - traefik.enable=true
-      - traefik.http.routers.gluetun-qbit.rule=Host(`${QBIT_DOMAIN:-qbit.jannah.help}`)
+      # qBittorrent routing
+      - traefik.http.routers.gluetun-qbit.rule=Host(`qbit.jannah.help`)
       - traefik.http.routers.gluetun-qbit.entrypoints=https
       - traefik.http.routers.gluetun-qbit.tls.certresolver=letsencrypt
       - traefik.http.routers.gluetun-qbit.service=gluetun-qbit-svc
       - traefik.http.services.gluetun-qbit-svc.loadbalancer.server.port=8080
-      - traefik.http.routers.gluetun-jellyseerr.rule=Host(`${JELLYSEERR_DOMAIN:-see.jannah.help}`)
+      # Jellyseerr routing
+      - traefik.http.routers.gluetun-jellyseerr.rule=Host(`see.jannah.help`)
       - traefik.http.routers.gluetun-jellyseerr.entrypoints=https
       - traefik.http.routers.gluetun-jellyseerr.tls.certresolver=letsencrypt
       - traefik.http.routers.gluetun-jellyseerr.service=gluetun-jellyseerr-svc
