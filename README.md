@@ -31,6 +31,22 @@ This repository includes multiple versions of the Docker Compose file to ensure 
 
 All files contain identical configurations. Coolify should detect one of these files.
 
+### Volume Configuration for Coolify
+
+The Docker Compose files use named volumes that are optimized for Coolify:
+
+```yaml
+volumes:
+  gluetun-config: null
+  qbittorrent-config: null
+  downloads: null
+  jellyseerr-config: null
+```
+
+These named volumes will show up in the Coolify UI under "Persistent Storage" with the correct formats. Avoid using absolute paths like `/data/downloads` directly in the compose file as they can cause issues with Coolify deployments.
+
+After deploying to Coolify, you can map these volumes to specific paths on your host machine through the Coolify UI if needed.
+
 ## Configuration
 
 ### VPN Settings (Important)
@@ -40,11 +56,11 @@ All files contain identical configurations. Coolify should detect one of these f
   - `WIREGUARD_ADDRESSES`
 
 ### Data Storage
-The service uses the following paths:
-- `/data/downloads` - qBittorrent downloads directory
-- `/data/jellyseerr-config` - Jellyseerr configuration
+The service uses named volumes for data persistence:
+- `downloads` - qBittorrent downloads directory
+- `jellyseerr-config` - Jellyseerr configuration
 
-Make sure these directories exist on your host or modify the paths in the docker-compose.yml file.
+These can be managed through the Coolify UI after deployment.
 
 ### Domain Configuration
 The default domains are:
