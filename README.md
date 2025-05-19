@@ -31,6 +31,22 @@ This repository includes multiple versions of the Docker Compose file to ensure 
 
 All files contain identical configurations. Coolify should detect one of these files.
 
+### Domain Configuration
+
+The stack is preconfigured with the following domains:
+- qBittorrent: `qbit.jannah.help`
+- Jellyseerr: `see.jannah.help`
+
+These domain configurations are set in the Traefik labels for the Gluetun service. If you need to use different domains:
+
+1. Update the `Host` rule in the Traefik labels:
+   ```yaml
+   - traefik.http.routers.gluetun-qbit.rule=Host(`your-qbit-domain.com`)
+   - traefik.http.routers.gluetun-jellyseerr.rule=Host(`your-jellyseerr-domain.com`)
+   ```
+
+2. Make sure your DNS records are properly configured to point to your Coolify server.
+
 ### Volume Configuration for Coolify
 
 The Docker Compose files use named volumes that are optimized for Coolify:
@@ -61,13 +77,6 @@ The service uses named volumes for data persistence:
 - `jellyseerr-config` - Jellyseerr configuration
 
 These can be managed through the Coolify UI after deployment.
-
-### Domain Configuration
-The default domains are:
-- qBittorrent: `qbit.jannah.help`
-- Jellyseerr: `see.jannah.help`
-
-Update these in environment variables if needed.
 
 ## Environment Variables
 See `.env.example` for all available configuration options.
