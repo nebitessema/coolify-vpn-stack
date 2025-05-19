@@ -22,6 +22,15 @@ This repository is configured to be deployed with Coolify from a Git repository:
 5. Configure any environment variables (see `.env.example`)
 6. Deploy the stack
 
+### Note About Compose Files
+
+This repository includes multiple versions of the Docker Compose file to ensure compatibility:
+- `docker-compose.yml` - Standard format
+- `docker-compose.yaml` - Alternative extension
+- `compose.yaml` - New standard format
+
+All files contain identical configurations. Coolify should detect one of these files.
+
 ## Configuration
 
 ### VPN Settings (Important)
