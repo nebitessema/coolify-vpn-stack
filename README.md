@@ -31,40 +31,6 @@ This repository includes multiple versions of the Docker Compose file to ensure 
 
 All files contain identical configurations. Coolify should detect one of these files.
 
-### Domain Configuration
-
-The stack is pre-configured with the following domains:
-- qBittorrent: `qbit.jannah.help`
-- Jellyseerr: `see.jannah.help`
-
-These domains are set using Coolify's special `SERVICE_FQDN_*` environment variables. If you need to use different domains, update the following variables in the compose files:
-
-```yaml
-# For qBittorrent
-- SERVICE_FQDN_QBIT=qbit.jannah.help
-
-# For Jellyseerr
-- SERVICE_FQDN_JELLYSEERR=see.jannah.help
-```
-
-Make sure your DNS records are properly configured to point to your Coolify server.
-
-### Volume Configuration for Coolify
-
-The Docker Compose files use named volumes that are optimized for Coolify:
-
-```yaml
-volumes:
-  gluetun-config: null
-  qbittorrent-config: null
-  downloads: null
-  jellyseerr-config: null
-```
-
-These named volumes will show up in the Coolify UI under "Persistent Storage" with the correct formats. Avoid using absolute paths like `/data/downloads` directly in the compose file as they can cause issues with Coolify deployments.
-
-After deploying to Coolify, you can map these volumes to specific paths on your host machine through the Coolify UI if needed.
-
 ## Configuration
 
 ### VPN Settings (Important)
@@ -74,11 +40,18 @@ After deploying to Coolify, you can map these volumes to specific paths on your 
   - `WIREGUARD_ADDRESSES`
 
 ### Data Storage
-The service uses named volumes for data persistence:
-- `downloads` - qBittorrent downloads directory
-- `jellyseerr-config` - Jellyseerr configuration
+The service uses the following paths:
+- `/data/downloads` - qBittorrent downloads directory
+- `/data/jellyseerr-config` - Jellyseerr configuration
 
-These can be managed through the Coolify UI after deployment.
+Make sure these directories exist on your host or modify the paths in the docker-compose.yml file.
+
+### Domain Configuration
+The default domains are:
+- qBittorrent: `qbit.jannah.help`
+- Jellyseerr: `see.jannah.help`
+
+Update these in environment variables if needed.
 
 ## Environment Variables
 See `.env.example` for all available configuration options.
