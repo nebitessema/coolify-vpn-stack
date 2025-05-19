@@ -8,6 +8,8 @@ version: '3.8'
 volumes:
   gluetun-config: null
   qbittorrent-config: null
+  downloads: null
+  jellyseerr-config: null
 networks:
   coolify:
     external: true
@@ -62,7 +64,7 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - qbittorrent-config:/config
-      - /data/downloads:/downloads
+      - downloads:/downloads
     restart: unless-stopped
 
   # --- Jellyseerr Service ---
@@ -77,5 +79,5 @@ services:
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/New_York}
     volumes:
-      - /data/jellyseerr-config:/app/config
+      - jellyseerr-config:/app/config
     restart: unless-stopped
