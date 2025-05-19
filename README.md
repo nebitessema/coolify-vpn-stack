@@ -33,19 +33,21 @@ All files contain identical configurations. Coolify should detect one of these f
 
 ### Domain Configuration
 
-The stack is preconfigured with the following domains:
+The stack is pre-configured with the following domains:
 - qBittorrent: `qbit.jannah.help`
 - Jellyseerr: `see.jannah.help`
 
-These domain configurations are set in the Traefik labels for the Gluetun service. If you need to use different domains:
+These domains are set using Coolify's special `SERVICE_FQDN_*` environment variables. If you need to use different domains, update the following variables in the compose files:
 
-1. Update the `Host` rule in the Traefik labels:
-   ```yaml
-   - traefik.http.routers.gluetun-qbit.rule=Host(`your-qbit-domain.com`)
-   - traefik.http.routers.gluetun-jellyseerr.rule=Host(`your-jellyseerr-domain.com`)
-   ```
+```yaml
+# For qBittorrent
+- SERVICE_FQDN_QBIT=qbit.jannah.help
 
-2. Make sure your DNS records are properly configured to point to your Coolify server.
+# For Jellyseerr
+- SERVICE_FQDN_JELLYSEERR=see.jannah.help
+```
+
+Make sure your DNS records are properly configured to point to your Coolify server.
 
 ### Volume Configuration for Coolify
 
