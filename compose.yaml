@@ -41,17 +41,9 @@ services:
       - coolify.managed=true
       - traefik.enable=true
       # qBittorrent routing
-      - traefik.http.routers.gluetun-qbit.rule=Host(`qbit.jannah.help`)
-      - traefik.http.routers.gluetun-qbit.entrypoints=https
-      - traefik.http.routers.gluetun-qbit.tls.certresolver=letsencrypt
-      - traefik.http.routers.gluetun-qbit.service=gluetun-qbit-svc
-      - traefik.http.services.gluetun-qbit-svc.loadbalancer.server.port=8080
+      - traefik.http.services.qbit-svc.loadbalancer.server.port=8080
       # Jellyseerr routing
-      - traefik.http.routers.gluetun-jellyseerr.rule=Host(`see.jannah.help`)
-      - traefik.http.routers.gluetun-jellyseerr.entrypoints=https
-      - traefik.http.routers.gluetun-jellyseerr.tls.certresolver=letsencrypt
-      - traefik.http.routers.gluetun-jellyseerr.service=gluetun-jellyseerr-svc
-      - traefik.http.services.gluetun-jellyseerr-svc.loadbalancer.server.port=5055
+      - traefik.http.services.jellyseerr-svc.loadbalancer.server.port=5055
 
   # --- qBittorrent Service ---
   qbittorrent:
@@ -65,6 +57,7 @@ services:
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/New_York}
       - WEBUI_PORT=8080
+      - SERVICE_FQDN_QBIT=qbit.jannah.help
     volumes:
       - qbittorrent-config:/config
       - downloads:/downloads
@@ -81,6 +74,7 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - TZ=${TZ:-America/New_York}
+      - SERVICE_FQDN_JELLYSEERR=see.jannah.help
     volumes:
       - jellyseerr-config:/app/config
     restart: unless-stopped
